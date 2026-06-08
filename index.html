@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenTask | Premium Task Board</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Glassmorphic Background Blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ================= AUTH CONTAINER ================= -->
+  <div id="auth-container" class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo-wrapper">
+          <i class="fa-solid fa-square-check logo-icon"></i>
+        </div>
+        <h1>ZenTask</h1>
+        <p>Your beautiful, real-time workflow manager</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form active">
+        <div class="input-group">
+          <label for="login-username">Username</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-user input-icon"></i>
+            <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="login-password">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+          </div>
+        </div>
+        <div class="error-msg" id="login-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <p class="auth-toggle-text">Don't have an account? <a href="#" id="go-to-register">Sign Up</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form">
+        <div class="input-group">
+          <label for="register-username">Username</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-user input-icon"></i>
+            <input type="text" id="register-username" placeholder="Min 3 characters" required autocomplete="username">
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="register-password">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="register-password" placeholder="Min 6 characters" required autocomplete="new-password">
+          </div>
+        </div>
+        <div class="error-msg" id="register-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Create Account</span> <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <p class="auth-toggle-text">Already have an account? <a href="#" id="go-to-login">Sign In</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= APP CONTAINER ================= -->
+  <div id="app-container" class="app-container hidden">
+    <!-- Navigation Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <i class="fa-solid fa-square-check logo-icon"></i>
+          <span>ZenTask</span>
+        </div>
+        <div class="ws-badge connected" id="ws-status">
+          <span class="dot"></span> <span class="status-text">Live</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Search -->
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="search-input" placeholder="Search tasks...">
+        </div>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Light/Dark Theme">
+          <i class="fa-regular fa-moon moon-icon"></i>
+          <i class="fa-regular fa-sun sun-icon"></i>
+        </button>
+
+        <!-- User Controls -->
+        <div class="user-profile">
+          <span id="user-display-name">Username</span>
+          <button id="logout-btn" class="btn btn-logout" title="Sign Out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="app-content">
+      <!-- Toolbar & Analytics Summary -->
+      <section class="dashboard-toolbar">
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper blue">
+              <i class="fa-solid fa-list-check"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Total Tasks</span>
+              <span class="stat-value" id="stat-total">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper green">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Completed</span>
+              <span class="stat-value" id="stat-completed">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper yellow">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Due Soon</span>
+              <span class="stat-value" id="stat-due-soon">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper purple">
+              <i class="fa-solid fa-percent"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Completion Rate</span>
+              <span class="stat-value" id="stat-rate">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label for="priority-filter">Priority</label>
+            <select id="priority-filter">
+              <option value="all">All Priorities</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="category-filter">Category</label>
+            <select id="category-filter">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="btn-new-task">
+            <i class="fa-solid fa-plus"></i> Add Task
+          </button>
+        </div>
+      </section>
+
+      <!-- Kanban Board -->
+      <section class="kanban-board">
+        <!-- To Do Column -->
+        <div class="kanban-col" data-status="todo">
+          <div class="col-header">
+            <div class="col-title-group">
+              <span class="status-indicator todo"></span>
+              <h3>To Do</h3>
+            </div>
+            <span class="col-count" id="count-todo">0</span>
+          </div>
+          <div class="col-cards-container" id="col-todo" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')">
+            <!-- Cards populated by JS -->
+          </div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div class="kanban-col" data-status="in_progress">
+          <div class="col-header">
+            <div class="col-title-group">
+              <span class="status-indicator in-progress"></span>
+              <h3>In Progress</h3>
+            </div>
+            <span class="col-count" id="count-in_progress">0</span>
+          </div>
+          <div class="col-cards-container" id="col-in_progress" ondragover="allowDrop(event)" ondrop="drop(event, 'in_progress')">
+            <!-- Cards populated by JS -->
+          </div>
+        </div>
+
+        <!-- Review Column -->
+        <div class="kanban-col" data-status="review">
+          <div class="col-header">
+            <div class="col-title-group">
+              <span class="status-indicator review"></span>
+              <h3>In Review</h3>
+            </div>
+            <span class="col-count" id="count-review">0</span>
+          </div>
+          <div class="col-cards-container" id="col-review" ondragover="allowDrop(event)" ondrop="drop(event, 'review')">
+            <!-- Cards populated by JS -->
+          </div>
+        </div>
+
+        <!-- Completed Column -->
+        <div class="kanban-col" data-status="completed">
+          <div class="col-header">
+            <div class="col-title-group">
+              <span class="status-indicator completed"></span>
+              <h3>Completed</h3>
+            </div>
+            <span class="col-count" id="count-completed">0</span>
+          </div>
+          <div class="col-cards-container" id="col-completed" ondragover="allowDrop(event)" ondrop="drop(event, 'completed')">
+            <!-- Cards populated by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= TASK DETAIL / FORM MODAL ================= -->
+  <div id="task-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-title-text">Create Task</h2>
+        <button class="btn-close-modal" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="task-form" class="modal-body">
+        <input type="hidden" id="task-form-id">
+        
+        <div class="form-row">
+          <div class="input-group">
+            <label for="task-title">Title *</label>
+            <input type="text" id="task-title" placeholder="Enter task title" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="task-desc">Description</label>
+            <textarea id="task-desc" placeholder="Describe this task..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="task-priority">Priority</label>
+            <select id="task-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="task-category">Category / Tag</label>
+            <input type="text" id="task-category" placeholder="Work, Personal, etc.">
+          </div>
+
+          <div class="input-group">
+            <label for="task-due-date">Due Date</label>
+            <input type="date" id="task-due-date">
+          </div>
+
+          <div class="input-group">
+            <label for="task-status">Status</label>
+            <select id="task-status">
+              <option value="todo" selected>To Do</option>
+              <option value="in_progress">In Progress</option>
+              <option value="review">In Review</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Checklist Section -->
+        <div class="checklist-section">
+          <label>Sub-tasks / Checklist</label>
+          <div class="checklist-creator">
+            <input type="text" id="checklist-item-input" placeholder="Add a sub-task...">
+            <button type="button" class="btn btn-secondary" id="btn-add-checklist-item">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <ul class="checklist-list" id="checklist-items-list">
+            <!-- Populated dynamically -->
+          </ul>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-task">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-task">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
